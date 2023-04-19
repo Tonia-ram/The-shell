@@ -9,13 +9,14 @@
 */
 void execute(char **values)
 {
-	char *cmd = NULL;
+	char *cmd = NULL, *actual_command = NULL;
 
 	if (values)
 	{
 		cmd = values[0];
+		actual_command = which(cmd);
 
-		if (execve(cmd, values, NULL) == -1)
+		if (execve(actual_command, values, NULL) == -1)
 		{
 			perror("Error:");
 		}
