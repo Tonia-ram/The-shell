@@ -11,6 +11,13 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
+typedef struct
+{
+	char** tokens;
+	int num_tokens;
+	int status_code;
+} token_array;
+
 void execute(char **values, const char *path, char **envp);
 char *which(char **cmd, const char *path);
 int input_handler(char *prompt, char **input, char **input_copy);
