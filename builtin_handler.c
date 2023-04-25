@@ -16,6 +16,26 @@ int unsetenv_var(const char* name) {
     }
     return status;
 }
+int change_directory(const char *path)
+{
+    int ret = chdir(path);
+    if (ret == -1) {
+        perror("chdir");
+        return EXIT_FAILURE;
+    }
+    char cwd[PATH_MAX];
+    if (getcwd(cwd, sizeof(cwd)) != NULL)
+    {
+        printf("Current working directory: %s\n", cwd);
+	setenv_var("PWD", cwd);
+    }
+    else
+    {
+        perror("getcwd");
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
 
 int is_builtin(char **command_array)
 {
@@ -31,6 +51,8 @@ int is_builtin(char **command_array)
 	else if (strcmp(command_array[0], "setenv") == 0)
 		return (1);
 	else if (strcmp(command_array[0], "unsetenv") == 0)
+		return (1);
+	else if (strcmp(command_array[0], "cd") == 0)
 		return (1);
 
 	return (0);
@@ -73,6 +95,24 @@ int builin_handler(char **command_array, char **envp)
 	if (command_array[1] == NULL)
 		return (0);
 	unsetenv_var(command_array[1]);
+	}
+	else if (strcmp(command_array[0], "cd") == 0)
+	{
+		if (command_array[1] == NULL)
+		{
+		change_directory(getenv("HOME"));
+		}
+		else
+		{
+			if (strcmp(command_array[1], "-") == 0)
+			{
+				change_directory(getenv("OLD_PWD"));
+			}
+			else 
+			{
+				change_directory(command_array[1]);
+			}
+		}
 	}
 	return (1);
 }
